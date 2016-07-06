@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.phonekeeper"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="20" />
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
+    <!-- 读写联系人权限 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!-- SD卡权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--获取当前任务队列  -->
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.NoTitleBar" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".WelcomeActivity"
+            android:label="@string/title_activity_welcome" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AppManagectivity"
+            android:label="@string/title_activity_app_managectivity" >
+        </activity>
+        <activity
+            android:name=".AppManageActivity"
+            android:label="@string/title_activity_app_manage" >
+        </activity>
+        <activity
+            android:name=".FilterActivityActivity"
+            android:label="@string/title_activity_filter_activity" >
+        </activity>
+        <activity
+            android:name=".FilterActivity"
+            android:label="@string/title_activity_filter" >
+        </activity>
+        <activity
+            android:name=".ProcessManageActivity"
+            android:label="@string/title_activity_process_manage" >
+        </activity>
+        <activity
+            android:name=".SpeedActivity"
+            android:label="@string/title_activity_speed" >
+        </activity>
+        <activity
+            android:name=".BackupActivity"
+            android:label="@string/title_activity_backup" >
+        </activity>
+        <activity
+            android:name=".SecretActivity"
+            android:label="@string/title_activity_secret" >
+        </activity>
+        <!-- 声明Receiver，是短信广播  SMS_RECEIVED -->
+        <receiver android:name="edu.sdut.phonekeeper.recerver.SMSReceiver" >
+            <intent-filter android:priority="2147483647" >
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".BlackListActivity"
+            android:label="@string/title_activity_black_list" >
+        </activity>
+        <activity
+            android:name=".APPLockActivity"
+            android:label="@string/title_activity_applock" >
+        </activity>
+        <service android:name="edu.sdut.phonekeeper.service.APPLockService"></service>
+    </application>
+
+</manifest>

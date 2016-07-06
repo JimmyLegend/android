@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PhoneKeeper</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_welcome">手机管家</string>
+    <string name="PhoneKeeper">手机管家</string>
+    <string name="title_activity_app_managectivity">AppManagectivity</string>
+    <string name="title_activity_app_manage">AppManageActivity</string>
+    <string name="title_activity_filter_activity">FilterActivityActivity</string>
+    <string name="title_activity_filter">FilterActivity</string>
+    <string name="title_activity_process_manage">ProcessManageActivity</string>
+    <string name="title_activity_speed">SpeedActivity</string>
+    <string name="title_activity_backup">BackupActivity</string>
+    <string name="title_activity_secret">SecretActivity</string>
+    <string name="title_activity_black_list">BlackListActivity</string>
+    <string name="title_activity_applock">APPLockActivity</string>
+
+</resources>
