@@ -58,7 +58,7 @@ public class ProcessManageActivity extends Activity {
 //					}
 //				}).setNegativeButton("取消",null).create().show();
 new AlertDialog.Builder(ProcessManageActivity.this)
-.setTitle("提示")
+.setTitle("提示").setIcon(R.drawable.alert2)
 .setMessage("确定要结束进程["+process.appName+"]吗？")
 .setPositiveButton("确定",new DialogInterface.OnClickListener() {
 					

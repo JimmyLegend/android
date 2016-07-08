@@ -4,8 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.PublicKey;
 import java.sql.Date;
 import java.util.Currency;
+
+import com.example.phonekeeper.FilePickerDialog;
+import com.example.phonekeeper.R;
+import com.example.phonekeeper.FilePickerDialog.OnFileSelectListener;
 
 import android.R.integer;
 import android.app.Activity;
@@ -25,18 +30,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class BackupActivity extends Activity {
-
-	private Button btnBackup;
-	private Button btnRestore;
+	private String tvpath;
+	private TextView tv_path;
+	private ImageButton btnBackup;
+	private ImageButton btnRestore;
 	private String filePath="/mnt/sdcard/text.txt";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_backup);
-		btnBackup=(Button) findViewById(R.id.btn_backup);
-		btnRestore=(Button) findViewById(R.id.btn_restore);
+		btnBackup=(ImageButton) findViewById(R.id.btn_backup);
+		tv_path=(TextView) findViewById(R.id.tv_path);
+		btnRestore=(ImageButton) findViewById(R.id.btn_restore);
 		btnBackup.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -56,10 +65,23 @@ public class BackupActivity extends Activity {
 			}
 		});
 	}
+	public void chooseFile(View view) {
+		
+		FilePickerDialog filePickerDialog=new FilePickerDialog(this);
+		filePickerDialog.setOnFileSelectListener(new OnFileSelectListener() {
+			@Override
+			public void onFileSelect(File file) {
+				tv_path.setText(file.getPath());
+				tvpath=file.getPath();
+			}
+		});
+		filePickerDialog.show();
+		
+	}
 	private String readFile(){
 		String contacts="";
 		try {
-			File file=new File(filePath);
+			File file=new File(tvpath);
 			FileInputStream inStream=new FileInputStream(file);
 			ByteArrayOutputStream outStream=new ByteArrayOutputStream();
 			byte[] buffer=new byte[1024 * 5];

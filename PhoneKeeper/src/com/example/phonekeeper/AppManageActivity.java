@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +55,13 @@ public class AppManageActivity extends Activity {
 				Uri uri=Uri.parse("package:"+app.packageName);
 				//过滤系统应用
 				if((app.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM)!=0){
-					Toast.makeText(AppManageActivity.this,"系统应用不可卸载！",Toast.LENGTH_LONG).show();
+					
+					Toast toast=Toast.makeText(AppManageActivity.this,"系统应用不可卸载！",Toast.LENGTH_LONG);
+					LinearLayout toast_layout=(LinearLayout) toast.getView();
+					ImageView iv=new ImageView(AppManageActivity.this);
+					iv.setImageResource(R.drawable.alert);
+					toast_layout.addView(iv);
+					toast.show();
 					return;
 				}
 				//对应用进行卸载操作

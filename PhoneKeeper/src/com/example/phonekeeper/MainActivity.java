@@ -20,17 +20,20 @@ public class MainActivity extends Activity {
 
 	private GridView gridView;
 	private int[] icon={
-			R.drawable.yygl,
-			R.drawable.srlj,
-			R.drawable.jcgl,
-			R.drawable.sjjs,
-			R.drawable.sjbf,
-			R.drawable.ysbh
+			R.drawable.yingyong,
+			R.drawable.saorao,
+			R.drawable.jincheng,
+			R.drawable.speed,
+			R.drawable.shoujibeifen,
+			R.drawable.yinsi,
+			R.drawable.baidu,
+			R.drawable.system,
+			R.drawable.tool
 	};
 
 	//要显示的文字
 	private String[] iconName = { "应用管理", "骚扰拦截", "进程管理", "手机加速", "手机备份",
-			"隐私保护" };
+			"隐私保护","浏览器","手机信息","小工具"};
 	    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,24 @@ public class MainActivity extends Activity {
                 case 5://隐私保护
                 {
                 	Intent intent=new Intent(MainActivity.this,SecretActivity.class);
+					startActivity(intent);
+	                break;
+                }
+                case 6://隐私保护
+                {
+                	Intent intent=new Intent(MainActivity.this,WebActivity.class);
+					startActivity(intent);
+	                break;
+                }
+                case 7://隐私保护
+                {
+                	Intent intent=new Intent(MainActivity.this,SysmagActivity.class);
+					startActivity(intent);
+	                break;
+                }
+                case 8://隐私保护
+                {
+                	Intent intent=new Intent(MainActivity.this,ToolActivity.class);
 					startActivity(intent);
 	                break;
                 }

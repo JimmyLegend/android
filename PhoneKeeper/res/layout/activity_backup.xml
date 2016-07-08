@@ -6,20 +6,40 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#55FF55"
-        android:gravity="center"
+        android:layout_height="50dp"
+        android:background="#3F51B5"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="10dp"
             android:text="手机备份"
-            android:textColor="#000000"
-            android:textSize="25sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        
+        <Button 
+        android:layout_below="@+id/tv_path"
+        android:onClick="chooseFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="点击选择文件路径"/>
+        
+        <TextView
+        android:id="@+id/tv_path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="文件路径"
+        android:hint="这里将会显示选择的文件的路径" />
 
     </LinearLayout>
 
@@ -30,7 +50,7 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-        <Button
+        <!-- <Button
             android:id="@+id/btn_backup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +62,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="还原" />
+            android:text="还原" /> 
+ -->
+         <ImageButton
+            android:id="@+id/btn_backup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/beifen" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:text="备份" />
+
+        <ImageButton
+            android:id="@+id/btn_restore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/huanyuan" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:text="还原" /> 
 
     </LinearLayout>
 

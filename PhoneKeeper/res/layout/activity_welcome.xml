@@ -10,7 +10,7 @@
     android:background="@drawable/welcome"
     >
 
-    <TextView
+     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -19,5 +19,13 @@
         android:text="@string/PhoneKeeper"
         android:textColor="#FFFFFF"
         android:textSize="25dp" />
+
+     <ProgressBar
+         android:id="@+id/progressBar1"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_centerHorizontal="true"
+         android:layout_marginBottom="76dp" />
 
 </RelativeLayout>

@@ -16,5 +16,9 @@
     <string name="title_activity_secret">SecretActivity</string>
     <string name="title_activity_black_list">BlackListActivity</string>
     <string name="title_activity_applock">APPLockActivity</string>
+    <string name="title_activity_caculator">CaculatorActivity</string>
+    <string name="title_activity_web">WebActivity</string>
+    <string name="title_activity_sysmag">SysmagActivity</string>
+    <string name="title_activity_tool">ToolActivity</string>
 
 </resources>
