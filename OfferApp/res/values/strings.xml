@@ -8,5 +8,6 @@
     <string name="title_activity_note">NoteActivity</string>
     <string name="title_activity_clock">ClockActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
 
 </resources>

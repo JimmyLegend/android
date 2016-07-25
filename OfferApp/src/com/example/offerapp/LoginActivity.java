@@ -25,8 +25,8 @@ private DBOpenHelper helper;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		helper=new DBOpenHelper(LoginActivity.this);
-		userEditText=(EditText) findViewById(R.id.user_edit);
-		passwordEditText=(EditText) findViewById(R.id.password_edit);
+		userEditText=(EditText) findViewById(R.id.user_edit2);
+		passwordEditText=(EditText) findViewById(R.id.password_edit2);
 		loginButton=(Button) findViewById(R.id.login_button);
 		registerButton=(Button) findViewById(R.id.register_button);
 		loginButton.setOnClickListener(new OnClickListener() {
@@ -44,7 +44,14 @@ private DBOpenHelper helper;
 					startActivity(intent);
 					Toast.makeText(LoginActivity.this,"登陆成功！",Toast.LENGTH_SHORT).show();
 				}else{
-					Toast.makeText(LoginActivity.this,"密码或用户名不正确！",Toast.LENGTH_SHORT).show();
+					
+					if(!exist1(number)){
+						Toast.makeText(LoginActivity.this,"用户名不正确！",Toast.LENGTH_SHORT).show();
+					}
+					else{
+						Toast.makeText(LoginActivity.this,"密码不正确！",Toast.LENGTH_LONG).show();
+					}
+					
 				}
 			}
 		});
@@ -53,7 +60,8 @@ private DBOpenHelper helper;
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				
+				Intent intent=new Intent(LoginActivity.this,RegisterActivity.class);
+				startActivity(intent);
 			}
 		});
 	}
@@ -65,8 +73,10 @@ private DBOpenHelper helper;
 			SQLiteDatabase db = helper.getReadableDatabase();
 			
 			Cursor cursor = db.rawQuery("select * from User where number=?", new String[]{number});
-			Cursor cursor1 = db.rawQuery("select * from User where password=?", new String[]{password});
-			if(cursor.moveToNext()&&cursor1.moveToNext()){
+			//Cursor cursor1 = db.rawQuery("select * from User where password=?", new String[]{password});
+			
+			if(cursor.moveToNext()&&cursor.getString(2).equals(password)){
+				//Toast.makeText(LoginActivity.this,cursor.getString(0)+" "+cursor.getString(1)+""+cursor.getString(2),Toast.LENGTH_LONG).show();
 				result = true;
 			}
 			
@@ -75,6 +85,41 @@ private DBOpenHelper helper;
 			
 			return result;
 		}
+		// 查询号码
+				public boolean exist1(String number){
+					boolean result = false;
+					
+					// 获取数据库
+					SQLiteDatabase db = helper.getReadableDatabase();
+					
+					Cursor cursor = db.rawQuery("select * from User where number=?", new String[]{number});
+					if(cursor.moveToNext()){
+						result = true;
+					}
+					
+					cursor.close();
+					db.close();
+					
+					return result;
+				}
+				// 查询号码
+				public boolean exist2(String number,String password){
+					boolean result = false;
+					
+					// 获取数据库
+					SQLiteDatabase db = helper.getReadableDatabase();
+					
+					Cursor cursor = db.rawQuery("select * from User where number=?", new String[]{password});
+					if(cursor.moveToNext()&&!cursor.getString(2).equals(password)){
+						Toast.makeText(LoginActivity.this,"密码不正确！",Toast.LENGTH_SHORT).show();
+						result = true;
+					}
+					
+					cursor.close();
+					db.close();
+					
+					return result;
+				}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
