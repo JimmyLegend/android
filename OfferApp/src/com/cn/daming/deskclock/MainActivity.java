@@ -1,6 +1,8 @@
 package com.cn.daming.deskclock;
 
 import com.cn.daming.deskclock.R;
+import com.example.notebooks.NotebookActivity;
+import com.example.offerapp.AppManageActivity;
 
 import edu.sdut.offerapp.db.DBOpenHelper;
 import android.app.Activity;
@@ -26,9 +28,10 @@ public class MainActivity extends Activity {
 	private GridView gridView;
 	private int[] icon={
 			R.drawable.note1,
-			R.drawable.clock
+			R.drawable.clock,
+			R.drawable.ic_launcher
 	};
-	private String[] iconName = { "记事本","闹钟"};
+	private String[] iconName = { "记事本","闹钟","应用管理"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +53,19 @@ gridView=(GridView) findViewById(R.id.gridView);
 				switch (arg2) {
 				case 0://记事本
 				{
-					Intent intent=new Intent(MainActivity.this,NoteActivity.class);
+					Intent intent=new Intent(MainActivity.this,NotebookActivity.class);
 				startActivity(intent);
 					break;
 				}
 				case 1://闹钟
 				{
 					Intent intent=new Intent(MainActivity.this,DeskClockMainActivity.class);
+					startActivity(intent);
+					break;
+				}
+				case 2://应用管理
+				{
+					Intent intent=new Intent(MainActivity.this,AppManageActivity.class);
 					startActivity(intent);
 					break;
 				}
