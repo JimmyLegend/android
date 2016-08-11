@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.cn.daming.deskclock;
 
 import android.app.KeyguardManager;
@@ -26,15 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.WindowManager;
-
-/**
- * Full screen alarm alert: pops visible indicator and plays alarm tone. This
- * activity shows the alert as a dialog.
- */
 public class AlarmAlert extends AlarmAlertFullScreen {
-
-    // If we try to check the keyguard more than 5 times, just launch the full
-    // screen activity.
     private int mKeyguardRetryCount;
     private final int MAX_KEYGUARD_CHECKS = 5;
 
@@ -59,9 +35,6 @@ public class AlarmAlert extends AlarmAlertFullScreen {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        // Listen for the screen turning off so that when the screen comes back
-        // on, the user does not need to unlock the phone to dismiss the alarm.
         registerReceiver(mScreenOffReceiver,
                 new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
@@ -70,7 +43,6 @@ public class AlarmAlert extends AlarmAlertFullScreen {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mScreenOffReceiver);
-        // Remove any of the keyguard messages just in case
         mHandler.removeMessages(0);
     }
 
@@ -93,7 +65,6 @@ public class AlarmAlert extends AlarmAlertFullScreen {
                 mHandler.sendMessageDelayed(mHandler.obtainMessage(0, km), 500);
             }
         } else {
-            // Launch the full screen activity but do not turn the screen on.
             Intent i = new Intent(this, AlarmAlertFullScreen.class);
             i.putExtra(Alarms.ALARM_INTENT_EXTRA, mAlarm);
             i.putExtra(SCREEN_OFF, true);

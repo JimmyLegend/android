@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.cn.daming.deskclock;
 
 import android.app.Activity;
@@ -40,24 +24,13 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import java.util.Calendar;
-
-/**
- * Alarm Clock alarm alert: pops visible indicator and plays alarm
- * tone. This activity is the full screen version which shows over the lock
- * screen with the wallpaper as the background.
- */
 public class AlarmAlertFullScreen extends Activity {
-
-    // These defaults must match the values in res/xml/settings.xml
     private static final String DEFAULT_SNOOZE = "10";
     private static final String DEFAULT_VOLUME_BEHAVIOR = "2";
     protected static final String SCREEN_OFF = "screen_off";
 
     protected Alarm mAlarm;
     private int mVolumeBehavior;
-
-    // Receives the ALARM_KILLED action from the AlarmKlaxon,
-    // and also ALARM_SNOOZE_ACTION / ALARM_DISMISS_ACTION from other applications
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -80,10 +53,7 @@ public class AlarmAlertFullScreen extends Activity {
         super.onCreate(icicle);
 
         mAlarm = getIntent().getParcelableExtra(Alarms.ALARM_INTENT_EXTRA);
-        //sign changed by reason
         mAlarm = Alarms.getAlarm(getContentResolver(), mAlarm.id);
-
-        // Get the volume/camera button behavior setting
         final String vol =
                 PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(SettingsActivity.KEY_VOLUME_BEHAVIOR,
@@ -95,8 +65,6 @@ public class AlarmAlertFullScreen extends Activity {
         final Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        // Turn on the screen unless we are being launched from the AlarmAlert
-        // subclass.
         if (!getIntent().getBooleanExtra(SCREEN_OFF, false)) {
             win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -104,8 +72,6 @@ public class AlarmAlertFullScreen extends Activity {
         }
 
         updateLayout();
-
-        // Register to get the alarm killed/snooze/dismiss intent.
         IntentFilter filter = new IntentFilter(Alarms.ALARM_KILLED);
         filter.addAction(Alarms.ALARM_SNOOZE_ACTION);
         filter.addAction(Alarms.ALARM_DISMISS_ACTION);
@@ -122,9 +88,6 @@ public class AlarmAlertFullScreen extends Activity {
         LayoutInflater inflater = LayoutInflater.from(this);
 
         setContentView(inflater.inflate(R.layout.alarm_alert, null));
-
-        /* snooze behavior: pop a snooze confirmation view, kick alarm
-           manager. */
         Button snooze = (Button) findViewById(R.id.snooze);
         snooze.requestFocus();
         snooze.setOnClickListener(new Button.OnClickListener() {
@@ -132,22 +95,15 @@ public class AlarmAlertFullScreen extends Activity {
                 snooze();
             }
         });
-
-        /* dismiss button: close notification */
         findViewById(R.id.dismiss).setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         dismiss(false);
                     }
                 });
-
-        /* Set the title from the passed in alarm */
         setTitle();
     }
-
-    // Attempt to snooze this alert.
     private void snooze() {
-        // Do not snooze if the snooze button is disabled.
         if (!findViewById(R.id.snooze).isEnabled()) {
             dismiss(false);
             return;
@@ -161,16 +117,10 @@ public class AlarmAlertFullScreen extends Activity {
                 + (1000 * 60 * snoozeMinutes);
         Alarms.saveSnoozeAlert(AlarmAlertFullScreen.this, mAlarm.id,
                 snoozeTime);
-
-        // Get the display time for the snooze and update the notification.
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(snoozeTime);
-
-        // Append (snoozed) to the label.
         String label = mAlarm.getLabelOrDefault(this);
         label = getString(R.string.alarm_notify_snooze_label, label);
-
-        // Notify the user that the alarm has been snoozed.
         Intent cancelSnooze = new Intent(this, AlarmReceiver.class);
         cancelSnooze.setAction(Alarms.CANCEL_SNOOZE);
         cancelSnooze.putExtra(Alarms.ALARM_ID, mAlarm.id);
@@ -188,10 +138,7 @@ public class AlarmAlertFullScreen extends Activity {
 
         String displayTime = getString(R.string.alarm_alert_snooze_set,
                 snoozeMinutes);
-        // Intentionally log the snooze time for debugging.
         Log.v("wangxianming", " AlarmAlertFullScreen"+displayTime);
-
-        // Display the snooze minutes in a toast.
         Toast.makeText(AlarmAlertFullScreen.this, displayTime,
                 Toast.LENGTH_LONG).show();
         stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
@@ -201,24 +148,14 @@ public class AlarmAlertFullScreen extends Activity {
     private NotificationManager getNotificationManager() {
         return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
-
-    // Dismiss the alarm.
     private void dismiss(boolean killed) {
-        // The service told us that the alarm has been killed, do not modify
-        // the notification or stop the service.
         if (!killed) {
-            // Cancel the notification and stop playing the alarm
             NotificationManager nm = getNotificationManager();
             nm.cancel(mAlarm.id);
             stopService(new Intent(Alarms.ALARM_ALERT_ACTION));
         }
         finish();
     }
-
-    /**
-     * this is called when a second alarm is triggered while a
-     * previous alert window is still active.
-     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -233,7 +170,6 @@ public class AlarmAlertFullScreen extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        // If the alarm was deleted at some point, disable snooze.
         if (Alarms.getAlarm(getContentResolver(), mAlarm.id) == null) {
             Button snooze = (Button) findViewById(R.id.snooze);
             snooze.setEnabled(false);
@@ -244,16 +180,13 @@ public class AlarmAlertFullScreen extends Activity {
     public void onDestroy() {
         super.onDestroy();
         Log.v("wangxianming", "AlarmAlert.onDestroy()");
-        // No longer care about the alarm being killed.
         unregisterReceiver(mReceiver);
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        // Do this on key down to handle a few of the system keys.
         boolean up = event.getAction() == KeyEvent.ACTION_UP;
         switch (event.getKeyCode()) {
-            // Volume keys and camera keys dismiss the alarm
             case KeyEvent.KEYCODE_VOLUME_UP:
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_CAMERA:
@@ -281,8 +214,6 @@ public class AlarmAlertFullScreen extends Activity {
 
     @Override
     public void onBackPressed() {
-        // Don't allow back to dismiss. This method is overriden by AlarmAlert
-        // so that the dialog is dismissed.
         return;
     }
 }

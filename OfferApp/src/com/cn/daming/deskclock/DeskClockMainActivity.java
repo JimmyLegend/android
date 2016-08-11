@@ -32,9 +32,6 @@ import android.widget.TextView;
 public class DeskClockMainActivity extends Activity implements OnItemClickListener{
 	
     static final String PREFERENCES = "AlarmClock";
-
-    /** This must be false for production.  If true, turns on logging,
-        test code, etc. */
     static final boolean DEBUG = false;
 
     private SharedPreferences mPrefs;
@@ -46,19 +43,19 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        //取自定义布局的LayoutInflater
+      //取自定义布局的LayoutInflater
         mFactory = LayoutInflater.from(this);
-        //取getSharedPreferences中key==“AlarmClock”的值
+      //取getSharedPreferences中key==“AlarmClock”的值
         mPrefs = getSharedPreferences(PREFERENCES, 0);
-        //获取闹钟的cursor
+      //获取闹钟的cursor
         mCursor = Alarms.getAlarmsCursor(getContentResolver());
         
-        //更新布局界面
+      //更新布局界面
         updateLayout();
 
     }
     
-    //加载更新界面布局
+  //加载更新界面布局
     private void updateLayout() {
     	setContentView(R.layout.alarm_clock);
         mAlarmsList = (ListView) findViewById(R.id.alarms_list);
@@ -74,7 +71,7 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
                     addNewAlarm();
                 }
             });
-        // Make the entire view selected when focused.
+       
         addAlarm.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     v.setSelected(hasFocus);
@@ -96,7 +93,6 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
     
     /**
      * listview的适配器继承CursorAdapter
-     * @author wangxianming
      * 也可以使用BaseAdapter
      */
     private class AlarmTimeAdapter extends CursorAdapter {
@@ -113,25 +109,25 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
             return ret;
         }
 
-        //把view绑定cursor的每一项
+      //把view绑定cursor的每一项
         public void bindView(View view, Context context, Cursor cursor) {
             final Alarm alarm = new Alarm(cursor);
 
             View indicator = view.findViewById(R.id.indicator);
 
-            // Set the initial resource for the bar image.
+           
             final ImageView barOnOff =
                     (ImageView) indicator.findViewById(R.id.bar_onoff);
             barOnOff.setImageResource(alarm.enabled ?
                     R.drawable.ic_indicator_on : R.drawable.ic_indicator_off);
 
-            // Set the initial state of the clock "checkbox"
+           
             final CheckBox clockOnOff =
                     (CheckBox) indicator.findViewById(R.id.clock_onoff);
             clockOnOff.setChecked(alarm.enabled);
 
-            // Clicking outside the "checkbox" should also change the state.
-            //对checkbox设置监听，使里外一致
+            
+          //对checkbox设置监听，使里外一致
             indicator.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         clockOnOff.toggle();
@@ -143,14 +139,14 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
             DigitalClock digitalClock =
                     (DigitalClock) view.findViewById(R.id.digitalClock);
 
-            // set the alarm text
+           
             final Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, alarm.hour);
             c.set(Calendar.MINUTE, alarm.minutes);
             digitalClock.updateTime(c);
             digitalClock.setTypeface(Typeface.DEFAULT);
 
-            // Set the repeat text or leave it blank if it does not repeat.
+            
             TextView daysOfWeekView =
                     (TextView) digitalClock.findViewById(R.id.daysOfWeek);
             final String daysOfWeekStr =
@@ -162,7 +158,7 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
                 daysOfWeekView.setVisibility(View.GONE);
             }
 
-            // Display the label
+            
             TextView labelView =
                     (TextView) view.findViewById(R.id.label);
             if (alarm.label != null && alarm.label.length() != 0) {
@@ -186,23 +182,19 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
-     * 创建上下文菜单
-     */
+    //创建上下文菜单
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         final AdapterContextMenuInfo info =
                 (AdapterContextMenuInfo) item.getMenuInfo();
         final int id = (int) info.id;
-        // Error check just in case.
+        
         if (id == -1) {
             return super.onContextItemSelected(item);
         }
         switch (item.getItemId()) {
             case R.id.delete_alarm:
-                // Confirm that the alarm will be deleted.
+              
                 new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.delete_alarm))
                         .setMessage(getString(R.string.delete_alarm_confirm))
@@ -240,49 +232,41 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
         return super.onContextItemSelected(item);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-     * 创建菜单
-     */
+    //创建菜单
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view,
             ContextMenuInfo menuInfo) {
-        // Inflate the menu from xml.
+       
         getMenuInflater().inflate(R.menu.context_menu, menu);
 
-        // Use the current item to create a custom view for the header.
+        
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         final Cursor c =
                 (Cursor) mAlarmsList.getAdapter().getItem((int) info.position);
         final Alarm alarm = new Alarm(c);
 
-        // Construct the Calendar to compute the time.
+        
         final Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, alarm.hour);
         cal.set(Calendar.MINUTE, alarm.minutes);
         final String time = Alarms.formatTime(this, cal);
 
-        // Inflate the custom view and set each TextView's text.
+       
         final View v = mFactory.inflate(R.layout.context_menu_header, null);
         TextView textView = (TextView) v.findViewById(R.id.header_time);
         textView.setText(time);
         textView = (TextView) v.findViewById(R.id.header_label);
         textView.setText(alarm.label);
 
-        // Set the custom view on the menu.
+        
         menu.setHeaderView(v);
-        // Change the text based on the state of the alarm.
+        
         if (alarm.enabled) {
             menu.findItem(R.id.enable_alarm).setTitle(R.string.disable_alarm);
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-     * 设置菜单的点击事件的处理
-     */
+ //   设置菜单的点击事件的处理
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -290,8 +274,6 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.menu_item_desk_clock:
-            	//modify by wangxianming in 2012-4-14
-//                startActivity(new Intent(this, DeskClock.class));
                 return true;
             case R.id.menu_item_add_alarm:
                 addNewAlarm();
@@ -301,23 +283,14 @@ public class DeskClockMainActivity extends Activity implements OnItemClickListen
         }
         return super.onOptionsItemSelected(item);
     }
-   
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     * 创建菜单
-     */
+    //创建菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.alarm_list_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
     
-    /*
-     * (non-Javadoc)
-     * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
-     * 创建菜单的点击事件响应
-     */
+    //创建菜单的点击事件响应
 	public void onItemClick(AdapterView<?> adapterView, View v, int pos, long id) {
 		Intent intent = new Intent(this, SetAlarm.class);
         intent.putExtra(Alarms.ALARM_ID, (int) id);

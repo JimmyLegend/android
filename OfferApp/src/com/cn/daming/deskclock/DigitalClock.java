@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2008 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.cn.daming.deskclock;
 
 import java.text.DateFormatSymbols;
@@ -33,10 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-/**
- * Displays the time
- */
 public class DigitalClock extends LinearLayout {
 
     private final static String M12 = "h:mm";
@@ -49,7 +29,6 @@ public class DigitalClock extends LinearLayout {
     private boolean mLive = true;
     private boolean mAttached;
 
-    /* called by system on minute ticks */
     private final Handler mHandler = new Handler();
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
             @Override
@@ -112,21 +91,9 @@ public class DigitalClock extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
-        /**
-         * note by wangxianming
-         * in 2012-4-14
-         */
-//        if (sTypeface == null) {
-//            sTypeface = Typeface.createFromAsset(getContext().getAssets(),
-//                "fonts/Clockopia.ttf");
-//        }
         mTimeDisplay = (TextView) findViewById(R.id.timeDisplay);
-        /**
-         * note by wangxianming
-         * in 2012-4-14
-         */
-//        mTimeDisplay.setTypeface(sTypeface);
+        
+
         mAmPm = new AmPm(this);
         mCalendar = Calendar.getInstance();
 
@@ -143,7 +110,7 @@ public class DigitalClock extends LinearLayout {
         mAttached = true;
 
         if (mLive) {
-            /* monitor time ticks, time changed, timezone */
+            
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_TIME_TICK);
             filter.addAction(Intent.ACTION_TIME_CHANGED);
@@ -151,7 +118,7 @@ public class DigitalClock extends LinearLayout {
             getContext().registerReceiver(mIntentReceiver, filter);
         }
 
-        /* monitor 12/24-hour display preference */
+        
         mFormatChangeObserver = new FormatChangeObserver();
         getContext().getContentResolver().registerContentObserver(
                 Settings.System.CONTENT_URI, true, mFormatChangeObserver);

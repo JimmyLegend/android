@@ -41,10 +41,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 /**
- * ÁÆ°ÁêÜÊØè‰∏Ä‰∏™ÈóπÈíü
- * ÊØè‰∏Ä‰∏™ÈóπÈíüÂØπÂ∫îÁöÑ‰ø°ÊÅØÈÉΩÁªëÂÆöÂú®Preference‰∏≠‰∫Ü
+ * π‹¿Ì√ø“ª∏ˆƒ÷÷”
+ * √ø“ª∏ˆƒ÷÷”∂‘”¶µƒ–≈œ¢∂º∞Û∂®‘⁄Preference÷–¡À
  */
 public class SetAlarm extends PreferenceActivity
         implements TimePickerDialog.OnTimeSetListener,
@@ -64,20 +63,17 @@ public class SetAlarm extends PreferenceActivity
     private boolean mTimePickerCancelled;
     private Alarm   mOriginalAlarm;
 
-    /**
-     * Set an alarm.  Requires an Alarms.ALARM_ID to be passed in as an
-     * extra. FIXME: Pass an Alarm object like every other Activity.
-     */
+    
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        // Override the default content view.
+        
         setContentView(R.layout.set_alarm);
 
         addPreferencesFromResource(R.xml.alarm_prefs);
 
-        // Get each preference so we can retrieve the value later.
+        
         mLabel = (EditTextPreference) findPreference("label");
         mLabel.setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
@@ -123,12 +119,12 @@ public class SetAlarm extends PreferenceActivity
 
         Alarm alarm = null;
         if (mId == -1) {
-            // No alarm id means create a new alarm.
+          
             alarm = new Alarm();
         } else {
-            /* load alarm details from database */
+           
             alarm = Alarms.getAlarm(getContentResolver(), mId);
-            // Bad alarm, bail to avoid a NPE.
+            
             if (alarm == null) {
                 finish();
                 return;
@@ -138,11 +134,9 @@ public class SetAlarm extends PreferenceActivity
 
         updatePrefs(mOriginalAlarm);
 
-        // We have to do this to get the save/cancel buttons to highlight on
-        // their own.
+        
         getListView().setItemsCanFocus(true);
 
-        // Attach actions to each button.
         Button b = (Button) findViewById(R.id.alarm_save);
         b.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -156,7 +150,7 @@ public class SetAlarm extends PreferenceActivity
                 public void onClick(View v) {
                     int newId = mId;
                     updatePrefs(mOriginalAlarm);
-                    // "Revert" on a newly created alarm should delete it.
+                    
                     if (mOriginalAlarm.id == -1) {
                         Alarms.deleteAlarm(SetAlarm.this, newId);
                     } else {
@@ -176,7 +170,7 @@ public class SetAlarm extends PreferenceActivity
             });
         }
 
-        // The last thing we do is pop the time picker if this is a new alarm.
+        
         if (mId == -1) {
             // Assume the user hit cancel
             mTimePickerCancelled = true;
@@ -184,15 +178,14 @@ public class SetAlarm extends PreferenceActivity
         }
     }
 
-    // Used to post runnables asynchronously.
+    
     private static final Handler sHandler = new Handler();
 
     public boolean onPreferenceChange(final Preference p, Object newValue) {
-        // Asynchronously save the alarm since this method is called _before_
-        // the value of the preference has changed.
+        
         sHandler.post(new Runnable() {
             public void run() {
-                // Editing any preference (except enable) enables the alarm.
+                
                 if (p != mEnabledPref) {
                     mEnabledPref.setChecked(true);
                 }
@@ -211,7 +204,7 @@ public class SetAlarm extends PreferenceActivity
         mMinutes = alarm.minutes;
         mRepeatPref.setDaysOfWeek(alarm.daysOfWeek);
         mVibratePref.setChecked(alarm.vibrate);
-        // Give the alert uri to the preference.
+        
         mAlarmPref.setAlert(alarm.alert);
         updateTime();
     }
@@ -228,9 +221,7 @@ public class SetAlarm extends PreferenceActivity
 
     @Override
     public void onBackPressed() {
-        // In the usual case of viewing an alarm, mTimePickerCancelled is
-        // initialized to false. When creating a new alarm, this value is
-        // assumed true until the user changes the time.
+        
         if (!mTimePickerCancelled) {
             saveAlarm();
         }
@@ -243,14 +234,14 @@ public class SetAlarm extends PreferenceActivity
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // onTimeSet is called when the user clicks "Set"
+      
         mTimePickerCancelled = false;
         mHour = hourOfDay;
         mMinutes = minute;
         updateTime();
-        // If the time has been changed, enable the alarm.
+        
         mEnabledPref.setChecked(true);
-        // Save the alarm and pop a toast.
+        
         popAlarmSetToast(this, saveAlarmAndEnableRevert());
     }
 
@@ -261,7 +252,7 @@ public class SetAlarm extends PreferenceActivity
     }
 
     private long saveAlarmAndEnableRevert() {
-        // Enable "Revert" to go back to the original Alarm.
+      
         final Button revert = (Button) findViewById(R.id.alarm_revert);
         revert.setEnabled(true);
         return saveAlarm();
@@ -281,8 +272,7 @@ public class SetAlarm extends PreferenceActivity
         long time;
         if (alarm.id == -1) {
             time = Alarms.addAlarm(this, alarm);
-            // addAlarm populates the alarm with the new id. Update mId so that
-            // changes to other preferences update the new alarm.
+           
             mId = alarm.id;
         } else {
             time = Alarms.setAlarm(this, alarm);
@@ -305,10 +295,6 @@ public class SetAlarm extends PreferenceActivity
                 .show();
     }
 
-    /**
-     * Display a toast that tells the user how long until the alarm
-     * goes off.  This helps prevent "am/pm" mistakes.
-     */
     static void popAlarmSetToast(Context context, int hour, int minute,
                                  Alarm.DaysOfWeek daysOfWeek) {
         popAlarmSetToast(context,
@@ -323,10 +309,6 @@ public class SetAlarm extends PreferenceActivity
         toast.show();
     }
 
-    /**
-     * format "Alarm set for 2 days 7 hours and 53 minutes from
-     * now"
-     */
     static String formatToast(Context context, long timeInMillis) {
         long delta = timeInMillis - System.currentTimeMillis();
         long hours = delta / (1000 * 60 * 60);

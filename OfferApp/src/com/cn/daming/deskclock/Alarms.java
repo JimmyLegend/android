@@ -19,55 +19,18 @@ import android.util.Log;
 import java.util.Calendar;
 import java.text.DateFormatSymbols;
 
-/**
- * The Alarms provider supplies info about Alarm Clock settings
- * 鏍稿績绫伙紝瀵笴lock璁剧疆鎻愪緵鏀寔淇℃伅
- */
+//核心类，对Clock设置提供支持信息
 public class Alarms {
-
-    // This action triggers the AlarmReceiver as well as the AlarmKlaxon. It
-    // is a public action used in the manifest for receiving Alarm broadcasts
-    // from the alarm manager.
     public static final String ALARM_ALERT_ACTION = "com.cn.daming.deskclock.ALARM_ALERT";
-
-    // A public action sent by AlarmKlaxon when the alarm has stopped sounding
-    // for any reason (e.g. because it has been dismissed from AlarmAlertFullScreen,
-    // or killed due to an incoming phone call, etc).
     public static final String ALARM_DONE_ACTION = "com.cn.daming.deskclock.ALARM_DONE";
-
-    // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
-    // can snooze the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
     public static final String ALARM_SNOOZE_ACTION = "com.cn.daming.deskclock.ALARM_SNOOZE";
-
-    // AlarmAlertFullScreen listens for this broadcast intent, so that other applications
-    // can dismiss the alarm (after ALARM_ALERT_ACTION and before ALARM_DONE_ACTION).
     public static final String ALARM_DISMISS_ACTION = "com.cn.daming.deskclock.ALARM_DISMISS";
-
-    // This is a private action used by the AlarmKlaxon to update the UI to
-    // show the alarm has been killed.
     public static final String ALARM_KILLED = "alarm_killed";
-
-    // Extra in the ALARM_KILLED intent to indicate to the user how long the
-    // alarm played before being killed.
     public static final String ALARM_KILLED_TIMEOUT = "alarm_killed_timeout";
-
-    // This string is used to indicate a silent alarm in the db.
     public static final String ALARM_ALERT_SILENT = "silent";
-
-    // This intent is sent from the notification when the user cancels the
-    // snooze alert.
     public static final String CANCEL_SNOOZE = "cancel_snooze";
-
-    // This string is used when passing an Alarm object through an intent.
     public static final String ALARM_INTENT_EXTRA = "intent.extra.alarm";
-
-    // This extra is the raw Alarm object data. It is used in the
-    // AlarmManagerService to avoid a ClassNotFoundException when filling in
-    // the Intent extras.
     public static final String ALARM_RAW_DATA = "intent.extra.alarm_raw";
-
-    // This string is used to identify the alarm id passed to SetAlarm from the
-    // list of alarms.
     public static final String ALARM_ID = "alarm_id";
 
     final static String PREF_SNOOZE_ID = "snooze_id";
@@ -77,12 +40,7 @@ public class Alarms {
     private final static String DM24 = "E k:mm";
 
     private final static String M12 = "h:mm aa";
-    // Shared with DigitalClock
     final static String M24 = "kk:mm";
-
-    /**
-     * Creates a new Alarm and fills in the given alarm's id.
-     */
     public static long addAlarm(Context context, Alarm alarm) {
         ContentValues values = createContentValues(alarm);
         Uri uri = context.getContentResolver().insert(
@@ -96,11 +54,6 @@ public class Alarms {
         setNextAlert(context);
         return timeInMillis;
     }
-
-    /**
-     * Removes an existing Alarm.  If this alarm is snoozing, disables
-     * snooze.  Sets next alert.
-     */
     public static void deleteAlarm(Context context, int alarmId) {
         if (alarmId == -1) return;
 
@@ -113,18 +66,11 @@ public class Alarms {
 
         setNextAlert(context);
     }
-
-    /**
-     * Queries all alarms
-     * @return cursor over all alarms
-     */
     public static Cursor getAlarmsCursor(ContentResolver contentResolver) {
         return contentResolver.query(
                 Alarm.Columns.CONTENT_URI, Alarm.Columns.ALARM_QUERY_COLUMNS,
                 null, null, Alarm.Columns.DEFAULT_SORT_ORDER);
     }
-
-    // Private method to get a more limited set of alarms from the database.
     private static Cursor getFilteredAlarmsCursor(
             ContentResolver contentResolver) {
         return contentResolver.query(Alarm.Columns.CONTENT_URI,
@@ -134,8 +80,6 @@ public class Alarms {
 
     private static ContentValues createContentValues(Alarm alarm) {
         ContentValues values = new ContentValues(8);
-        // Set the alarm_time value if this alarm does not repeat. This will be
-        // used later to disable expire alarms.
         long time = 0;
         if (!alarm.daysOfWeek.isRepeatSet()) {
             time = calculateAlarm(alarm);
@@ -149,7 +93,6 @@ public class Alarms {
         values.put(Alarm.Columns.VIBRATE, alarm.vibrate);
         values.put(Alarm.Columns.MESSAGE, alarm.label);
 
-        // A null alert Uri indicates a silent alarm.
         values.put(Alarm.Columns.ALERT, alarm.alert == null ? ALARM_ALERT_SILENT
                 : alarm.alert.toString());
 
@@ -157,8 +100,7 @@ public class Alarms {
     }
 
     private static void clearSnoozeIfNeeded(Context context, long alarmTime) {
-        // If this alarm fires before the next snooze, clear the snooze to
-        // enable this alarm.
+       
         SharedPreferences prefs =
                 context.getSharedPreferences(DeskClockMainActivity.PREFERENCES, 0);
         long snoozeTime = prefs.getLong(PREF_SNOOZE_TIME, 0);
@@ -167,10 +109,7 @@ public class Alarms {
         }
     }
 
-    /**
-     * Return an Alarm object representing the alarm id in the database.
-     * Returns null if no alarm exists.
-     */
+   
     public static Alarm getAlarm(ContentResolver contentResolver, int alarmId) {
         Cursor cursor = contentResolver.query(
                 ContentUris.withAppendedId(Alarm.Columns.CONTENT_URI, alarmId),
@@ -187,11 +126,7 @@ public class Alarms {
     }
 
 
-    /**
-     * A convenience method to set an alarm in the Alarms
-     * content provider.
-     * @return Time when the alarm will fire.
-     */
+    
     public static long setAlarm(Context context, Alarm alarm) {
         ContentValues values = createContentValues(alarm);
         ContentResolver resolver = context.getContentResolver();
@@ -202,15 +137,10 @@ public class Alarms {
         long timeInMillis = calculateAlarm(alarm);
 
         if (alarm.enabled) {
-            // Disable the snooze if we just changed the snoozed alarm. This
-            // only does work if the snoozed alarm is the same as the given
-            // alarm.
-            // TODO: disableSnoozeAlert should have a better name.
+           
             disableSnoozeAlert(context, alarm.id);
 
-            // Disable the snooze if this alarm fires before the snoozed alarm.
-            // This works on every alarm since the user most likely intends to
-            // have the modified alarm fire next.
+           
             clearSnoozeIfNeeded(context, timeInMillis);
         }
 
@@ -219,12 +149,7 @@ public class Alarms {
         return timeInMillis;
     }
 
-    /**
-     * A convenience method to enable or disable an alarm.
-     *
-     * @param id             corresponds to the _id column
-     * @param enabled        corresponds to the ENABLED column
-     */
+   
 
     public static void enableAlarm(
             final Context context, final int id, boolean enabled) {
@@ -248,8 +173,7 @@ public class Alarms {
         ContentValues values = new ContentValues(2);
         values.put(Alarm.Columns.ENABLED, enabled ? 1 : 0);
 
-        // If we are enabling the alarm, calculate alarm time since the time
-        // value in Alarm may be old.
+       
         if (enabled) {
             long time = 0;
             if (!alarm.daysOfWeek.isRepeatSet()) {
@@ -257,7 +181,7 @@ public class Alarms {
             }
             values.put(Alarm.Columns.ALARM_TIME, time);
         } else {
-            // Clear the snooze if the id matches.
+            
             disableSnoozeAlert(context, alarm.id);
         }
 
@@ -274,13 +198,12 @@ public class Alarms {
             if (cursor.moveToFirst()) {
                 do {
                     Alarm a = new Alarm(cursor);
-                    // A time of 0 indicates this is a repeating alarm, so
-                    // calculate the time to get the next alert.
+                    
                     if (a.time == 0) {
                         a.time = calculateAlarm(a);
                     } else if (a.time < now) {
                         Log.v("wangxianming", "Disabling expired alarm set for ");
-                        // Expired alarm, disable it and move along.
+                        
                         enableAlarmInternal(context, a, false);
                         continue;
                     }
@@ -295,10 +218,7 @@ public class Alarms {
         return alarm;
     }
 
-    /**
-     * Disables non-repeating alarms that have passed.  Called at
-     * boot.
-     */
+   
     public static void disableExpiredAlarms(final Context context) {
         Cursor cur = getFilteredAlarmsCursor(context.getContentResolver());
         long now = System.currentTimeMillis();
@@ -306,8 +226,7 @@ public class Alarms {
         if (cur.moveToFirst()) {
             do {
                 Alarm alarm = new Alarm(cur);
-                // A time of 0 means this alarm repeats. If the time is
-                // non-zero, check if the time is before now.
+               
                 if (alarm.time != 0 && alarm.time < now) {
                     enableAlarmInternal(context, alarm, false);
                 }
@@ -316,11 +235,7 @@ public class Alarms {
         cur.close();
     }
 
-    /**
-     * Called at system startup, on time/timezone change, and whenever
-     * the user changes alarm settings.  Activates snooze if set,
-     * otherwise loads all alarms, activates next alert.
-     */
+   
     public static void setNextAlert(final Context context) {
         if (!enableSnoozeAlert(context)) {
             Alarm alarm = calculateNextAlert(context);
@@ -332,13 +247,7 @@ public class Alarms {
         }
     }
 
-    /**
-     * Sets alert in AlarmManger and StatusBar.  This is what will
-     * actually launch the alert when the alarm triggers.
-     *
-     * @param alarm Alarm.
-     * @param atTimeInMillis milliseconds since epoch
-     */
+   
     private static void enableAlert(Context context, final Alarm alarm,
             final long atTimeInMillis) {
         AlarmManager am = (AlarmManager)
@@ -350,15 +259,6 @@ public class Alarms {
 
         Intent intent = new Intent(ALARM_ALERT_ACTION);
 
-        // XXX: This is a slight hack to avoid an exception in the remote
-        // AlarmManagerService process. The AlarmManager adds extra data to
-        // this Intent which causes it to inflate. Since the remote process
-        // does not know about the Alarm class, it throws a
-        // ClassNotFoundException.
-        //
-        // To avoid this, we marshall the data ourselves and then parcel a plain
-        // byte[] array. The AlarmReceiver class knows to build the Alarm
-        // object from the byte[] array.
         Parcel out = Parcel.obtain();
         alarm.writeToParcel(out, 0);
         out.setDataPosition(0);
@@ -377,11 +277,7 @@ public class Alarms {
         saveNextAlarm(context, timeString);
     }
 
-    /**
-     * Disables alert in AlarmManger and StatusBar.
-     *
-     * @param id Alarm ID.
-     */
+  
     static void disableAlert(Context context) {
         AlarmManager am = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
@@ -405,29 +301,24 @@ public class Alarms {
             ed.putLong(PREF_SNOOZE_TIME, time);
             ed.apply();
         }
-        // Set the next alert after updating the snooze.
+       
         setNextAlert(context);
     }
 
-    /**
-     * Disable the snooze alert if the given id matches the snooze id.
-     */
+  
     static void disableSnoozeAlert(final Context context, final int id) {
         SharedPreferences prefs = context.getSharedPreferences(
         		DeskClockMainActivity.PREFERENCES, 0);
         int snoozeId = prefs.getInt(PREF_SNOOZE_ID, -1);
         if (snoozeId == -1) {
-            // No snooze set, do nothing.
+            
             return;
         } else if (snoozeId == id) {
-            // This is the same id so clear the shared prefs.
+            
             clearSnoozePreference(context, prefs);
         }
     }
 
-    // Helper to remove the snooze preference. Do not use clear because that
-    // will erase the clock preferences. Also clear the snooze notification in
-    // the window shade.
     private static void clearSnoozePreference(final Context context,
             final SharedPreferences prefs) {
         final int alarmId = prefs.getInt(PREF_SNOOZE_ID, -1);
@@ -443,10 +334,6 @@ public class Alarms {
         ed.apply();
     };
 
-    /**
-     * If there is a snooze set, enable it in AlarmManager
-     * @return true if snooze is set
-     */
     private static boolean enableSnoozeAlert(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences(
         		DeskClockMainActivity.PREFERENCES, 0);
@@ -457,23 +344,19 @@ public class Alarms {
         }
         long time = prefs.getLong(PREF_SNOOZE_TIME, -1);
 
-        // Get the alarm from the db.
+        
         final Alarm alarm = getAlarm(context.getContentResolver(), id);
         if (alarm == null) {
             return false;
         }
-        // The time in the database is either 0 (repeating) or a specific time
-        // for a non-repeating alarm. Update this value so the AlarmReceiver
-        // has the right time to compare.
+        
         alarm.time = time;
 
         enableAlert(context, alarm, time);
         return true;
     }
 
-    /**
-     * Tells the StatusBar whether the alarm is enabled or disabled
-     */
+   
     private static void setStatusBarIcon(Context context, boolean enabled) {
         Intent alarmChanged = new Intent("android.intent.action.ALARM_CHANGED");
         alarmChanged.putExtra("alarmSet", enabled);
@@ -485,21 +368,18 @@ public class Alarms {
                 .getTimeInMillis();
     }
 
-    /**
-     * Given an alarm in hours and minutes, return a time suitable for
-     * setting in AlarmManager.
-     */
+   
     static Calendar calculateAlarm(int hour, int minute,
             Alarm.DaysOfWeek daysOfWeek) {
 
-        // start with now
+        
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(System.currentTimeMillis());
 
         int nowHour = c.get(Calendar.HOUR_OF_DAY);
         int nowMinute = c.get(Calendar.MINUTE);
 
-        // if alarm is behind current time, advance one day
+        
         if (hour < nowHour  ||
             hour == nowHour && minute <= nowMinute) {
             c.add(Calendar.DAY_OF_YEAR, 1);
@@ -520,33 +400,23 @@ public class Alarms {
         return formatTime(context, c);
     }
 
-    /* used by AlarmAlert */
+    
     static String formatTime(final Context context, Calendar c) {
         String format = get24HourMode(context) ? M24 : M12;
         return (c == null) ? "" : (String)DateFormat.format(format, c);
     }
 
-    /**
-     * Shows day and time -- used for lock screen
-     */
     private static String formatDayAndTime(final Context context, Calendar c) {
         String format = get24HourMode(context) ? DM24 : DM12;
         return (c == null) ? "" : (String)DateFormat.format(format, c);
     }
 
-    /**
-     * Save time of the next alarm, as a formatted string, into the system
-     * settings so those who care can make use of it.
-     */
     static void saveNextAlarm(final Context context, String timeString) {
         Settings.System.putString(context.getContentResolver(),
                                   Settings.System.NEXT_ALARM_FORMATTED,
                                   timeString);
     }
 
-    /**
-     * @return true if clock is set to 24-hour mode
-     */
     static boolean get24HourMode(final Context context) {
         return android.text.format.DateFormat.is24HourFormat(context);
     }
