@@ -1,5 +1,6 @@
 package com.example.notebooks;
-import com.cn.daming.deskclock.R;
+
+import com.example.clock.R;
 
 import android.content.Context;
 import android.database.Cursor;

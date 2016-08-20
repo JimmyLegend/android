@@ -1,9 +1,6 @@
 package com.example.notebooks;
 
-import com.cn.daming.deskclock.R;
-import com.cn.daming.deskclock.R.id;
-import com.cn.daming.deskclock.R.layout;
-import com.cn.daming.deskclock.R.menu;
+import com.example.clock.R;
 
 import android.app.Activity;
 import android.content.Intent;

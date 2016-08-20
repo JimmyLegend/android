@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.phonekeeper.AppManageActivity" >
+    tools:context="com.example.offerapp.AppManageActivity" >
 
     <item
         android:id="@+id/action_settings"

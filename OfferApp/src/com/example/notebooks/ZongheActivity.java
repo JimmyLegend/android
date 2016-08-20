@@ -5,10 +5,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.cn.daming.deskclock.R;
-import com.cn.daming.deskclock.R.id;
-import com.cn.daming.deskclock.R.layout;
-import com.cn.daming.deskclock.R.menu;
+import com.example.clock.R;
 
 import android.app.Activity;
 import android.content.ContentValues;

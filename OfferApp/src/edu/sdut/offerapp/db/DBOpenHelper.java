@@ -21,6 +21,11 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 		+ "number Text," 
 		+ "password Text" 
 		+ ");");
+		db.execSQL("CREATE TABLE IF NOT EXISTS "
+				+ "APPLock("
+				+ "_id integer primary key autoincrement,"
+				+ "pkgName Text"
+				+ ");");
 	}
 //	// ≤Â»Î∫≈¬Î
 //		public void add(String number,String password){

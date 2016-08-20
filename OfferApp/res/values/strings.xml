@@ -90,5 +90,8 @@
     <string name="title_activity_notebook">NotebookActivity</string>
     <string name="title_activity_zonghe">ZongheActivity</string>
     <string name="title_activity_my_content">MyContentActivity</string>
+    <string name="title_activity_applock">APPLockActivity</string>
+     <string name="title_activity_secret">SecretActivity</string>
+    
 
 </resources>

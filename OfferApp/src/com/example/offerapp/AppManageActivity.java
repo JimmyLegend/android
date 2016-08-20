@@ -1,9 +1,10 @@
 package com.example.offerapp;
-import com.cn.daming.deskclock.R;
 
 import java.util.List;
 
 import org.w3c.dom.Text;
+
+import com.example.clock.R;
 
 import android.app.Activity;
 import android.content.ClipData.Item;
